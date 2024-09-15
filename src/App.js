@@ -83,6 +83,8 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
+  const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false); // Состояние для открытия и закрытия модального окна
+  const [newTabName, setNewTabName] = useState(''); // Состояние для хранения имени новой вкладки
 
   // Проверка, было ли уже показано окно регистрации
   useEffect(() => {
@@ -92,22 +94,28 @@ function App() {
     }
   }, []);
 
-  const addTab = (backgroundColor, color) => {
+  const addTab = () => {
     if (tabs.length >= 10) {
       setIsAddTabButtonDisabled(true);
       return;
     }
-    const newTabName = prompt('Введите название новой вкладки', '', {
-      style: {
-        backgroundColor: backgroundColor,
-        color: color,
-      },
-    });
-    if (newTabName) {
+    setIsAddTabModalOpen(true); // Открываем модальное окно для добавления новой вкладки
+  };
+
+  const handleAddTab = () => {
+    if (newTabName.trim() !== '') {
       setTabs([...tabs, { name: newTabName, tasks: [] }]);
       if (tabs.length >= 9) {
         setIsAddTabButtonDisabled(true);
       }
+      setNewTabName('');
+      setIsAddTabModalOpen(false); // Закрываем модальное окно после добавления новой вкладки
+    }
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && newTabName.trim() !== '') {
+      handleAddTab();
     }
   };
 
@@ -174,7 +182,7 @@ function App() {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPressTask = (event) => {
     if (event.key === 'Enter') {
       addTask();
     }
@@ -190,9 +198,39 @@ function App() {
   const backgroundColor = useColorModeValue('white', 'gray.800');
   const color = useColorModeValue('black', 'white');
 
+  const remainingTasksToReward = 3 - tabs[activeTab].tasks.filter(task => task.completed).length;
+
   return (
     <Box>
       <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
+
+      {/* Модальное окно для добавления новой вкладки */}
+      <Modal isOpen={isAddTabModalOpen} onClose={() => setIsAddTabModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Добавить новую вкладку</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <Input
+                value={newTabName}
+                onChange={(e) => setNewTabName(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Введите название новой вкладки"
+                autoFocus
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleAddTab}>
+              Добавить
+            </Button>
+            <Button variant="ghost" onClick={() => setIsAddTabModalOpen(false)}>
+              Закрыть
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       <Flex direction="column" h="100vh">
         <Header onOpen={onOpen} toggleColorMode={toggleColorMode} colorMode={colorMode}/>
@@ -255,7 +293,7 @@ function App() {
                   placement="top"
                 >
                   <Button
-                    onClick={() => addTab(backgroundColor, color)}
+                    onClick={addTab}
                     ml={2}
                     size="sm"
                     variant="outline"
@@ -292,14 +330,12 @@ function App() {
                             onChange={() => handleTaskCompletion(taskIndex)}
                             mb={2}
                             pl="40px"
-                            isDisabled={task.completed}
                           >
                             <Input
                               value={task.text}
                               onChange={(e) => handleTaskChange(taskIndex, e.target.value)}
                               placeholder={`Задача ${taskIndex + 1}`}
                               variant="unstyled"
-                              isDisabled={task.completed}
                             /> 
                           
                           </Checkbox>
@@ -333,8 +369,8 @@ function App() {
                       <Input
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Добавить задачу"
+                        onKeyPress={handleKeyPressTask}
+                        placeholder={remainingTasksToReward > 0 ? `Осталось еще ${remainingTasksToReward} задач` : "Введи задачу"}
                       />
                       <Button onClick={addTask} ml={2} colorScheme="blue" bg="#3884FD" _hover={{ bg: "#2A69AC" }}>
                         Добавить
