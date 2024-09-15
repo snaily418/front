@@ -1,26 +1,26 @@
 import {
-    Box,
-    Button,
-    Checkbox,
-    Flex,
-    IconButton,
-    Input,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverCloseButton,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTrigger,
-    Stack,
-    TabPanel,
-    Textarea
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  IconButton,
+  Input,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Stack,
+  TabPanel,
+  Textarea,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { BiEdit } from "react-icons/bi";
 
 import { useSelector } from "react-redux";
-import { getTasks } from "../api/api";
+import { createTask, getTasks } from "../api/api";
 
 const Category = ({ id }) => {
   const category = useSelector((state) =>
@@ -37,7 +37,10 @@ const Category = ({ id }) => {
   const addTask = () => {
     if (newTask.trim() !== "") {
       setNewTask("");
-      setTasks([...tasks, ])
+
+      createTask(category.id, newTask).then((response) => {
+        setTasks([...tasks, response.data]);
+      });
     }
   };
 
@@ -79,7 +82,7 @@ const Category = ({ id }) => {
               pl="40px"
             >
               <Input
-                value={task.text}
+                value={task.title}
                 onChange={(e) => handleTaskChange(taskIndex, e.target.value)}
                 placeholder={`Задача ${taskIndex + 1}`}
                 variant="unstyled"

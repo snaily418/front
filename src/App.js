@@ -25,14 +25,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { FaCog, FaPlus, FaTasks, FaTrash } from "react-icons/fa";
+import { FaCog, FaPlus, FaTasks, FaTrash, FaFileExport } from "react-icons/fa";
 
 import AddTabModal from "./screens/AddTabModal";
 import Authorization from "./screens/Authorization";
 import Category from "./screens/Category";
 import Header from "./screens/Header";
 
-import { getCategories, getMe } from "./api/api";
+import { getCategories, getMe, getTasks } from "./api/api";
 import { SET_CATEGORIES, SET_USER } from "./store/actions";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -97,9 +97,15 @@ function App() {
 
   // Функция для экспорта всех заметок в JSON
   const handleExportNotes = () => {
-    const notes = categories.map((tab) => ({
+    let tasks = []
+    
+    categories.forEach(x => getTasks(x.id).then(response => tasks.push(response.data)))
+
+    console.log(tasks)
+
+    const notes = categories.map((tab, i) => ({
       name: tab.name,
-      tasks: [].map((task) => ({
+      tasks: tasks[i].map((task) => ({
         text: task.text,
         completed: task.completed,
         note: task.note,

@@ -25,3 +25,10 @@ export const createCategory = (title) =>
 
 export const getTasks = (categoryID) =>
   request("get", `/categories/${categoryID}/tasks`);
+
+export const createTask = (categoryID, title) =>
+  request("post", `/categories/${categoryID}/tasks`, {
+    title,
+    priority: false,
+    description: "",
+  });
