@@ -32,7 +32,7 @@ import Authorization from "./screens/Authorization";
 import Category from "./screens/Category";
 import Header from "./screens/Header";
 
-import { getCategories, getMe, getTasks } from "./api/api";
+import { deleteCategory, getCategories, getMe, getTasks } from "./api/api";
 import { SET_CATEGORIES, SET_USER } from "./store/actions";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -83,16 +83,17 @@ function App() {
     setIsAddTabModalOpen(true); // Открываем модальное окно для добавления новой вкладки
   };
 
-  const deleteTab = (index) => {
-    if (index < 2) return;
-    dispatch({ type: DELETE_CATEGORY, payload: categories[index].id });
+  const deleteTab = (id) => {
+    deleteCategory(id).then((response) => {
+      dispatch({ type: DELETE_CATEGORY, payload: id });
+      if (categories.length < 10) {
+        setIsAddTabButtonDisabled(false);
+      }
+    });
 
-    if (activeTab === index) {
-      setActiveTab(0);
-    }
-    if (categories.length < 10) {
-      setIsAddTabButtonDisabled(false);
-    }
+    // if (activeTab === index) {
+    //   setActiveTab(0);
+    // }
   };
 
   // Функция для экспорта всех заметок в JSON
@@ -212,7 +213,7 @@ function App() {
                     borderRadius="full"
                   >
                     {tab.title}
-                    {/* {!tab.permanent && (
+                    {!tab.permanent && (
                       <IconButton
                         icon={<FaTrash />}
                         size="xs"
@@ -221,7 +222,7 @@ function App() {
                         aria-label="Удалить вкладку"
                         borderRadius="full"
                       />
-                    )} */}
+                    )}
                   </Tab>
                 ))}
 

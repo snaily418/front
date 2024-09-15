@@ -23,6 +23,8 @@ export const getCategories = () => request("get", `/categories`, null);
 export const createCategory = (title) =>
   request("post", `/categories`, { title });
 
+export const deleteCategory = (id) => request("delete", `/categories/${id}`);
+
 export const getTasks = (categoryID) =>
   request("get", `/categories/${categoryID}/tasks`);
 
