@@ -63,8 +63,11 @@ import { BiEdit } from 'react-icons/bi';
 
 import Authorization from "./screens/Authorization"
 import Header from "./screens/Header"
+import { useSelector } from 'react-redux';
 
 function App() {
+  const categories = useSelector(state => state.categories)
+
   const { colorMode, toggleColorMode } = useColorMode();
   const [tabs, setTabs] = useState([
     { name: 'Работа', tasks: [] },
@@ -73,9 +76,7 @@ function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [newTask, setNewTask] = useState('');
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [coins, setCoins] = useState(0); // Состояние для хранения количества монет
   const [lastRewardDateWork, setLastRewardDateWork] = useState(null); // Состояние для хранения даты последней награды для папки "Работа"
   const [lastRewardDatePersonal, setLastRewardDatePersonal] = useState(null); // Состояние для хранения даты последней награды для папки "Личное"
@@ -179,19 +180,6 @@ function App() {
     }
   };
 
-  const handleRegistration = () => {
-    localStorage.setItem('hasRegistered', 'true');
-    setIsRegistrationModalOpen(false);
-  };
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsRegistrationModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
 
   const handleNoteChange = (index, value) => {
     const newTabs = [...tabs];
@@ -242,25 +230,26 @@ function App() {
           <Container maxW="container.md" centerContent flex={1} p={4}>
             <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
               <TabList justifyContent="start" borderRadius="md">
-                {tabs.map((tab, index) => (
+                {categories.map((tab, index) => (
                   <Tab 
                     key={index} 
                     _selected={{ color: 'white', bg: '#3884FD' }}
                     borderRadius="full"
                   >
-                    {tab.name}
-                    {index >= 2 && (
+                    {tab.title}
+                    {!tab.permanent && (
                       <IconButton
                         icon={<FaTrash />}
                         size="xs"
                         ml={2}
-                        onClick={() => deleteTab(index)}
+                        onClick={() => deleteTab(tab.id)}
                         aria-label="Удалить вкладку"
                         borderRadius="full"
                       />
                     )}
                   </Tab>
                 ))}
+
                 <Tooltip
                   label={isAddTabButtonDisabled ? "Невозможно добавить вкладку" : "Добавить вкладку задач"}
                   placement="top"
