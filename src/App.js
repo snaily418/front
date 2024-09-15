@@ -63,10 +63,6 @@ import { BiEdit } from 'react-icons/bi';
 
 import Authorization from "./screens/Authorization"
 
-// Импортируем шрифт Roboto
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/700.css';
-
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [tabs, setTabs] = useState([
@@ -85,8 +81,6 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
-  const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
-  const [newTabName, setNewTabName] = useState('');
 
   // Проверка, было ли уже показано окно регистрации
   useEffect(() => {
@@ -96,28 +90,22 @@ function App() {
     }
   }, []);
 
-  const addTab = () => {
+  const addTab = (backgroundColor, color) => {
     if (tabs.length >= 10) {
       setIsAddTabButtonDisabled(true);
       return;
     }
-    setIsAddTabModalOpen(true);
-  };
-
-  const handleAddTab = () => {
-    if (newTabName.trim() !== '') {
+    const newTabName = prompt('Введите название новой вкладки', '', {
+      style: {
+        backgroundColor: backgroundColor,
+        color: color,
+      },
+    });
+    if (newTabName) {
       setTabs([...tabs, { name: newTabName, tasks: [] }]);
       if (tabs.length >= 9) {
         setIsAddTabButtonDisabled(true);
       }
-      setNewTabName('');
-      setIsAddTabModalOpen(false);
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && newTabName.trim() !== '') {
-      handleAddTab();
     }
   };
 
@@ -184,7 +172,7 @@ function App() {
     }
   };
 
-  const handleKeyPressTask = (event) => {
+  const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       addTask();
     }
@@ -214,35 +202,8 @@ function App() {
   const color = useColorModeValue('black', 'white');
 
   return (
-    <Box fontFamily="Roboto, sans-serif">
+    <Box>
       <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
-
-      <Modal isOpen={isAddTabModalOpen} onClose={() => setIsAddTabModalOpen(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Добавить новую вкладку</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <Input
-                value={newTabName}
-                onChange={(e) => setNewTabName(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Введите название новой вкладки"
-                autoFocus
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleAddTab}>
-              Добавить
-            </Button>
-            <Button variant="ghost" onClick={() => setIsAddTabModalOpen(false)}>
-              Закрыть
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       <Flex direction="column" h="100vh">
         <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>
@@ -255,7 +216,7 @@ function App() {
               <Icon as={FaCoins} />
               <Text>{coins}</Text>
             </HStack>
-            <Icon as={colorMode === 'light' ? FaSun : FaMoon} mr={2} boxSize={6} />
+            <Icon as={colorMode === 'light' ? FaSun : FaMoon} mr={2} />
             <Switch isChecked={colorMode === 'dark'} onChange={toggleColorMode} size='lg' colorScheme="blue" />
           </Flex>
         </Flex>
@@ -270,14 +231,14 @@ function App() {
                 <VStack align="start" spacing={4}>
                   <Link onClick={() => { setActiveTab(0); onClose(); }}>
                     <HStack>
-                      <Icon as={FaTasks} boxSize={6} />
-                      <Text fontSize="lg">Задания</Text>
+                      <Icon as={FaTasks} />
+                      <Text>Задания</Text>
                     </HStack>
                   </Link>
                   <Link onClick={() => setIsRegistrationModalOpen(true)}>
                     <HStack>
-                      <Icon as={FaCog} boxSize={6} />
-                      <Text fontSize="lg">Настройки</Text>
+                      <Icon as={FaCog} />
+                      <Text>Настройки</Text>
                     </HStack>
                   </Link>
                 </VStack>
@@ -317,7 +278,7 @@ function App() {
                   placement="top"
                 >
                   <Button
-                    onClick={addTab}
+                    onClick={() => addTab(backgroundColor, color)}
                     ml={2}
                     size="sm"
                     variant="outline"
@@ -395,7 +356,7 @@ function App() {
                       <Input
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
-                        onKeyPress={handleKeyPressTask}
+                        onKeyPress={handleKeyPress}
                         placeholder="Добавить задачу"
                       />
                       <Button onClick={addTask} ml={2} colorScheme="blue" bg="#3884FD" _hover={{ bg: "#2A69AC" }}>

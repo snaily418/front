@@ -1,27 +1,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
 import {
-  Box,
-  Flex,
-  Avatar,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Checkbox,
   Button,
   Input,
-  useColorMode,
-  useColorModeValue,
-  IconButton,
-  Stack,
   useColorModeValue as mode,
   Modal,
   ModalOverlay,
@@ -32,53 +15,14 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Switch,
-  Icon,
-  Container,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-  VStack,
-  HStack,
-  Link,
-  Divider,
-  useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  Textarea,
-  Editable,
-  Tooltip,
 } from "@chakra-ui/react";
-import {
-  FaPlus,
-  FaTrash,
-  FaSun,
-  FaMoon,
-  FaBars,
-  FaTasks,
-  FaCog,
-  FaCoins,
-  FaComment,
-} from "react-icons/fa";
-import { BiEdit } from "react-icons/bi";
 
-import { getCategories } from "../api/api";
+import { getCategories, getMe } from "../api/api";
 import { auth } from "../api/auth";
 
-import { SET_CATEGORIES } from "../store/actions";
+import { SET_CATEGORIES, SET_USER } from "../store/actions";
 
-const Authorization = ({isOpen, setIsOpen}) => {
+const Authorization = ({ isOpen, setIsOpen }) => {
   const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
@@ -87,6 +31,13 @@ const Authorization = ({isOpen, setIsOpen}) => {
   const handleAuth = () => {
     auth(username, password).then((response) => {
       localStorage.setItem("token", response.data?.access_token);
+
+      getMe()
+        .then((response) => {
+          dispatch({ type: SET_USER, payload: response.data });
+          setIsOpen(false);
+        })
+        .catch((error) => {});
 
       getCategories()
         .then((response) => {
@@ -101,27 +52,36 @@ const Authorization = ({isOpen, setIsOpen}) => {
     <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Войти</ModalHeader>
+      <Tabs size='md' variant='enclosed'>
+          <TabList>
+          <Tab><ModalHeader>Войти</ModalHeader></Tab>
+          <Tab><ModalHeader>Регистрация</ModalHeader></Tab>
+          </TabList>
+        
         <ModalCloseButton />
+       
+        <TabPanels>
+        <TabPanel>
         <ModalBody>
-          <FormControl>
-            <FormLabel>Имя пользователя</FormLabel>
-            <Input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Введите имя пользователя"
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Пароль</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Введите пароль"
-            />
-          </FormControl>
-        </ModalBody>
+        
+        <FormControl>
+          <FormLabel>Имя пользователя</FormLabel>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Введите имя пользователя"
+          />
+        </FormControl>
+        <FormControl mt={4}>
+          <FormLabel>Пароль</FormLabel>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Введите пароль"
+          />
+        </FormControl>
+      </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={handleAuth}>
             Войти
@@ -130,6 +90,40 @@ const Authorization = ({isOpen, setIsOpen}) => {
             Закрыть
           </Button>
         </ModalFooter>
+        </TabPanel>
+        <TabPanel>
+        <ModalBody>
+        
+        <FormControl>
+          <FormLabel>Имя пользователя</FormLabel>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Введите имя пользователя"
+          />
+        </FormControl>
+        <FormControl mt={4}>
+          <FormLabel>Пароль</FormLabel>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Введите пароль"
+          />
+        </FormControl>
+      </ModalBody>
+        <ModalFooter>
+        <Button colorScheme="blue" mr={3} onClick={handleAuth}>
+            Регистрация
+          </Button>
+          <Button variant="ghost" onClick={() => setIsOpen(false)}>
+            Закрыть
+          </Button>
+          </ModalFooter>
+        </TabPanel>
+        
+        </TabPanels>
+        </Tabs>  
       </ModalContent>
     </Modal>
   );
