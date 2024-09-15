@@ -413,7 +413,7 @@ function App() {
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
                         onKeyPress={handleKeyPressTask}
-                        placeholder={remainingTasksToReward > 0 ? `Осталось еще ${remainingTasksToReward} задач` : "Введи задачу"}
+                        placeholder={remainingTasksToReward > 0 ? `Задач осталось: ${remainingTasksToReward}` : "Введи задачу"}
                       />
                       <Button onClick={addTask} ml={2} colorScheme="blue" bg="#3884FD" _hover={{ bg: "#2A69AC" }}>
                         Добавить
