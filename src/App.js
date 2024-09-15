@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Flex,
@@ -57,7 +58,8 @@ import {
   Textarea,
   Editable,
 } from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
+import { BiEdit } from 'react-icons/bi';
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -162,7 +164,12 @@ function App() {
     setIsLoggedIn(false);
   };
 
-  // Динамические цвета для модального окна в зависимости от темы
+  const handleNoteChange = (index, value) => {
+    const newTabs = [...tabs];
+    newTabs[activeTab].tasks[index].note = value;
+    setTabs(newTabs);
+  };
+
   const backgroundColor = useColorModeValue('white', 'gray.800');
   const color = useColorModeValue('black', 'white');
 
@@ -206,7 +213,7 @@ function App() {
       <Flex direction="column" h="100vh">
         <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>
           <IconButton icon={<FaBars />} onClick={onOpen} aria-label="Open Menu" />
-          <Text fontSize="xl" fontWeight="bold">
+          <Text fontSize="3xl" fontWeight="bold">
             Snaily
           </Text>
           <Flex align="center">
@@ -241,10 +248,11 @@ function App() {
                   </Link>
                 </VStack>
               </DrawerBody>
-              <DrawerFooter>
-                <Divider />
-                <Text mt={4}>&copy; 2024 Snaily</Text>
-              </DrawerFooter>
+                <div align="center">
+                  <Divider />
+                  <Text align="center" mb={5} mt={4}>&copy; 2024 Snaily</Text>
+                
+                </div>
             </DrawerContent>
           </Drawer>
 
