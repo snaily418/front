@@ -20,7 +20,7 @@ import React, { useEffect, useState } from "react";
 import { BiEdit } from "react-icons/bi";
 
 import { useSelector } from "react-redux";
-import { createTask, getTasks } from "../api/api";
+import { checkTask, createTask, getTasks } from "../api/api";
 
 const Category = ({ id }) => {
   const category = useSelector((state) =>
@@ -33,6 +33,19 @@ const Category = ({ id }) => {
   useEffect(() => {
     getTasks(id).then((response) => setTasks(response.data));
   }, []);
+
+  const markTask = (id) => {
+    checkTask(category.id, id).then(response => {
+        setTasks(tasks.map(x => { 
+            if (x.id === id) {
+                return {...x, checked: true}
+            } else {
+                return x
+            }
+        }
+        ))
+    })
+  }
 
   const addTask = () => {
     if (newTask.trim() !== "") {
@@ -60,7 +73,7 @@ const Category = ({ id }) => {
   return (
     <TabPanel>
       <Stack spacing={2}>
-        {tasks.map((task, taskIndex) => (
+        {tasks.toSorted((a, b) => a.checked > b.checked).map((task, taskIndex) => (
           <Box key={taskIndex} position="relative">
             <Box
               position="absolute"
@@ -76,8 +89,9 @@ const Category = ({ id }) => {
             </Box>
             <Checkbox
               colorScheme="teal"
-              isChecked={task.completed}
-              onChange={() => {}}
+              isChecked={task.checked}
+              isDisabled={task.checked}
+              onChange={() => {markTask(task.id)}}
               mb={2}
               pl="40px"
             >

@@ -123,7 +123,7 @@ const Authorization = ({ isOpen, setIsOpen }) => {
                 <FormControl mt={4}>
                   <FormLabel>Электронная почта</FormLabel>
                   <Input
-                    value={username}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Введите имя пользователя"
                   />

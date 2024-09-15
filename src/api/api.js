@@ -32,3 +32,6 @@ export const createTask = (categoryID, title) =>
     priority: false,
     description: "",
   });
+
+export const checkTask = (categoryID, taskID) =>
+  request("post", `/categories/${categoryID}/tasks/${taskID}`);

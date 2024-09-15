@@ -212,7 +212,7 @@ function App() {
                     borderRadius="full"
                   >
                     {tab.title}
-                    {!tab.permanent && (
+                    {/* {!tab.permanent && (
                       <IconButton
                         icon={<FaTrash />}
                         size="xs"
@@ -221,7 +221,7 @@ function App() {
                         aria-label="Удалить вкладку"
                         borderRadius="full"
                       />
-                    )}
+                    )} */}
                   </Tab>
                 ))}
 
