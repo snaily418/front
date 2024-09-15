@@ -97,21 +97,24 @@ function App() {
 
   // Функция для экспорта всех заметок в JSON
   const handleExportNotes = () => {
-    let tasks = []
-    
-    categories.forEach(x => getTasks(x.id).then(response => tasks.push(response.data)))
+    let tasks = {};
 
-    console.log(tasks)
+    categories.forEach((x) =>
+      getTasks(x.id).then((response) => (tasks[x.id] = response.data))
+    );
 
-    const notes = categories.map((tab, i) => ({
-      name: tab.name,
-      tasks: tasks[i].map((task) => ({
-        text: task.text,
-        completed: task.completed,
-        note: task.note,
-      })),
-    }));
-    exportToJson(notes);
+    setTimeout(() => {
+      const notes = categories.map((tab, i) => ({
+        name: tab.name,
+        tasks: tasks[tab.id].map((task) => {
+          return {
+            title: task.title,
+            checked: task.completed,
+          };
+        }),
+      }));
+      exportToJson(notes);
+    }, 1000);
   };
 
   // const handleOpenTaskDetailsModal = (task) => {
