@@ -2,26 +2,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import {
-  Box,
-  Flex,
-  Avatar,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Checkbox,
   Button,
   Input,
-  useColorMode,
-  useColorModeValue,
-  IconButton,
-  Stack,
   useColorModeValue as mode,
   Modal,
   ModalOverlay,
@@ -32,53 +14,14 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Switch,
-  Icon,
-  Container,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-  VStack,
-  HStack,
-  Link,
-  Divider,
-  useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  Textarea,
-  Editable,
-  Tooltip,
 } from "@chakra-ui/react";
-import {
-  FaPlus,
-  FaTrash,
-  FaSun,
-  FaMoon,
-  FaBars,
-  FaTasks,
-  FaCog,
-  FaCoins,
-  FaComment,
-} from "react-icons/fa";
-import { BiEdit } from "react-icons/bi";
 
-import { getCategories } from "../api/api";
+import { getCategories, getMe } from "../api/api";
 import { auth } from "../api/auth";
 
-import { SET_CATEGORIES } from "../store/actions";
+import { SET_CATEGORIES, SET_USER } from "../store/actions";
 
-const Authorization = ({isOpen, setIsOpen}) => {
+const Authorization = ({ isOpen, setIsOpen }) => {
   const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
@@ -87,6 +30,13 @@ const Authorization = ({isOpen, setIsOpen}) => {
   const handleAuth = () => {
     auth(username, password).then((response) => {
       localStorage.setItem("token", response.data?.access_token);
+
+      getMe()
+        .then((response) => {
+          dispatch({ type: SET_USER, payload: response.data });
+          setIsOpen(false);
+        })
+        .catch((error) => {});
 
       getCategories()
         .then((response) => {

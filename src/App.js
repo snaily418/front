@@ -62,6 +62,7 @@ import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComm
 import { BiEdit } from 'react-icons/bi';
 
 import Authorization from "./screens/Authorization"
+import Header from "./screens/Header"
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -206,20 +207,7 @@ function App() {
       <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
 
       <Flex direction="column" h="100vh">
-        <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>
-          <IconButton icon={<FaBars />} onClick={onOpen} aria-label="Open Menu" />
-          <Text fontSize="3xl" fontWeight="bold">
-            Snaily
-          </Text>
-          <Flex align="center">
-            <HStack spacing={2} mr={4}>
-              <Icon as={FaCoins} />
-              <Text>{coins}</Text>
-            </HStack>
-            <Icon as={colorMode === 'light' ? FaSun : FaMoon} mr={2} />
-            <Switch isChecked={colorMode === 'dark'} onChange={toggleColorMode} size='lg' colorScheme="blue" />
-          </Flex>
-        </Flex>
+        <Header onOpen={onOpen} toggleColorMode={toggleColorMode} colorMode={colorMode}/>
 
         <Flex flex={1}>
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
