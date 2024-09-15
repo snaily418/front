@@ -50,18 +50,35 @@ import {
 import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog } from 'react-icons/fa';
 
 function App() {
+  // Хук для управления темой (светлая/темная)
   const { colorMode, toggleColorMode } = useColorMode();
+
+  // Состояние для хранения вкладок и задач
   const [tabs, setTabs] = useState([
     { name: 'Работа', tasks: [] },
     { name: 'Личное', tasks: [] },
   ]);
+
+  // Состояние для активной вкладки
   const [activeTab, setActiveTab] = useState(0);
+
+  // Состояние для новой задачи
   const [newTask, setNewTask] = useState('');
+
+  // Состояние для модального окна регистрации
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+
+  // Состояние для имени пользователя и пароля
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  // Состояние для статуса входа
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Хук для управления открытием/закрытием боковой панели
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Хук для отображения уведомлений
   const toast = useToast();
 
   // Проверка, было ли уже показано окно регистрации
@@ -72,6 +89,7 @@ function App() {
     }
   }, []);
 
+  // Функция для добавления новой вкладки
   const addTab = (backgroundColor, color) => {
     const newTabName = prompt('Введите название новой вкладки', '', {
       style: {
@@ -84,8 +102,9 @@ function App() {
     }
   };
 
+  // Функция для удаления вкладки
   const deleteTab = (index) => {
-    if (index < 2) return;
+    if (index < 2) return; // Не удаляем основные вкладки
     const newTabs = tabs.filter((_, i) => i !== index);
     setTabs(newTabs);
     if (activeTab === index) {
@@ -93,6 +112,7 @@ function App() {
     }
   };
 
+  // Функция для добавления новой задачи
   const addTask = () => {
     if (newTask.trim() !== '') {
       const newTabs = [...tabs];
@@ -102,18 +122,21 @@ function App() {
     }
   };
 
+  // Функция для изменения текста задачи
   const handleTaskChange = (index, value) => {
     const newTabs = [...tabs];
     newTabs[activeTab].tasks[index].text = value;
     setTabs(newTabs);
   };
 
+  // Функция для отметки задачи как выполненной
   const handleTaskCompletion = (index) => {
     const newTabs = [...tabs];
     newTabs[activeTab].tasks[index].completed = !newTabs[activeTab].tasks[index].completed;
     newTabs[activeTab].tasks.sort((a, b) => a.completed - b.completed);
     setTabs(newTabs);
 
+    // Проверка на выполнение 3 и более задач
     const completedTasks = newTabs[activeTab].tasks.filter(task => task.completed);
     if (completedTasks.length >= 3) {
       toast({
@@ -126,31 +149,37 @@ function App() {
     }
   };
 
+  // Функция для обработки нажатия клавиши Enter
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       addTask();
     }
   };
 
+  // Функция для обработки регистрации
   const handleRegistration = () => {
     localStorage.setItem('hasRegistered', 'true');
     setIsRegistrationModalOpen(false);
   };
 
+  // Функция для обработки входа
   const handleLogin = () => {
     setIsLoggedIn(true);
     setIsRegistrationModalOpen(false);
   };
 
+  // Функция для обработки выхода
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
 
+  // Динамические цвета для модального окна в зависимости от темы
   const backgroundColor = useColorModeValue('white', 'gray.800');
   const color = useColorModeValue('black', 'white');
 
   return (
     <Box>
+      {/* Модальное окно регистрации */}
       <Modal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
@@ -186,7 +215,9 @@ function App() {
         </ModalContent>
       </Modal>
 
+      {/* Основной контейнер с вертикальным расположением */}
       <Flex direction="column" h="100vh">
+        {/* Верхняя панель навигации */}
         <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>
           <IconButton icon={<FaBars />} onClick={onOpen} aria-label="Open Menu" />
           <Text fontSize="xl" fontWeight="bold">
@@ -198,7 +229,9 @@ function App() {
           </Flex>
         </Flex>
 
+        {/* Основной контент с боковой панелью и вкладками */}
         <Flex flex={1}>
+          {/* Боковая панель */}
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay />
             <DrawerContent>
@@ -227,8 +260,10 @@ function App() {
             </DrawerContent>
           </Drawer>
 
+          {/* Контейнер для вкладок и задач */}
           <Container maxW="container.md" centerContent flex={1} p={4}>
             <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
+              {/* Список вкладок */}
               <TabList justifyContent="start" borderRadius="md">
                 {tabs.map((tab, index) => (
                   <Tab 
@@ -259,6 +294,7 @@ function App() {
                   <FaPlus />
                 </Button>
               </TabList>
+              {/* Содержимое вкладок */}
               <TabPanels>
                 {tabs.map((tab, index) => (
                   <TabPanel key={index}>
