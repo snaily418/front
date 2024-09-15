@@ -34,10 +34,15 @@ import Header from "./screens/Header";
 
 import { getCategories, getMe } from "./api/api";
 import { SET_CATEGORIES, SET_USER } from "./store/actions";
+} from '@chakra-ui/react';
+import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
+import { BiEdit } from 'react-icons/bi';
 
 import { useDispatch, useSelector } from "react-redux";
 import { DELETE_CATEGORY } from "./store/actions";
 import { exportToJson } from "./utils/exportUtils";
+import Authorization from "./screens/Authorization"
+import TaskDetailsModal from './screens/TaskDetailsModal';
 
 function App() {
   const categories = useSelector((state) => state.categories);
@@ -50,6 +55,8 @@ function App() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState({});
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false); // Состояние для открытия и закрытия модального окна
 
   // Проверка, было ли уже показано окно регистрации
@@ -105,6 +112,21 @@ function App() {
     exportToJson(notes);
   };
 
+const handleOpenTaskDetailsModal = (task) => {
+    setSelectedTask(task);
+    setIsTaskDetailsModalOpen(true);
+  };
+
+  const handleSaveTaskDetails = (updatedTask) => {
+    const newTabs = [...tabs];
+    const taskIndex = newTabs[activeTab].tasks.findIndex(task => task === selectedTask);
+    if (taskIndex !== -1) {
+      newTabs[activeTab].tasks[taskIndex] = updatedTask;
+      setTabs(newTabs);
+    }
+    setIsTaskDetailsModalOpen(false);
+  };
+
   return (
     <Box>
       <Authorization
@@ -112,6 +134,12 @@ function App() {
         setIsOpen={setIsRegistrationModalOpen}
       />
 
+      <TaskDetailsModal
+        isOpen={isTaskDetailsModalOpen}
+        onClose={() => setIsTaskDetailsModalOpen(false)}
+        task={selectedTask}
+        onSave={handleSaveTaskDetails}
+      />
       {/* Модальное окно для добавления новой вкладки */}
       <AddTabModal
         isOpen={isAddTabModalOpen}
@@ -148,12 +176,6 @@ function App() {
                     <HStack>
                       <Icon as={FaCog} />
                       <Text>Настройки</Text>
-                    </HStack>
-                  </Link>
-                  <Link onClick={handleExportNotes}>
-                    <HStack>
-                      <Icon as={FaFileExport} />
-                      <Text>Экспорт в JSON</Text>
                     </HStack>
                   </Link>
                 </VStack>
@@ -199,7 +221,7 @@ function App() {
                   placement="top"
                 >
                   <Button
-                    onClick={addTab}
+                    onClick={() => addTab(backgroundColor, color)}
                     ml={2}
                     size="sm"
                     variant="outline"
