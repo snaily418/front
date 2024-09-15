@@ -58,11 +58,11 @@ import {
   Editable,
   Tooltip,
 } from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment, FaFileExport } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
 import { BiEdit } from 'react-icons/bi';
 
 import Authorization from "./screens/Authorization"
-import { exportToJson } from './utils/exportUtils'; // Импортируем функцию для экспорта
+import TaskDetailsModal from './screens/TaskDetailsModal';
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -82,8 +82,8 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
-  const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false); // Состояние для открытия и закрытия модального окна
-  const [newTabName, setNewTabName] = useState(''); // Состояние для хранения имени новой вкладки
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState({});
 
   // Проверка, было ли уже показано окно регистрации
   useEffect(() => {
@@ -93,28 +93,22 @@ function App() {
     }
   }, []);
 
-  const addTab = () => {
+  const addTab = (backgroundColor, color) => {
     if (tabs.length >= 10) {
       setIsAddTabButtonDisabled(true);
       return;
     }
-    setIsAddTabModalOpen(true); // Открываем модальное окно для добавления новой вкладки
-  };
-
-  const handleAddTab = () => {
-    if (newTabName.trim() !== '') {
+    const newTabName = prompt('Введите название новой вкладки', '', {
+      style: {
+        backgroundColor: backgroundColor,
+        color: color,
+      },
+    });
+    if (newTabName) {
       setTabs([...tabs, { name: newTabName, tasks: [] }]);
       if (tabs.length >= 9) {
         setIsAddTabButtonDisabled(true);
       }
-      setNewTabName('');
-      setIsAddTabModalOpen(false); // Закрываем модальное окно после добавления новой вкладки
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && newTabName.trim() !== '') {
-      handleAddTab();
     }
   };
 
@@ -181,7 +175,7 @@ function App() {
     }
   };
 
-  const handleKeyPressTask = (event) => {
+  const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       addTask();
     }
@@ -207,55 +201,34 @@ function App() {
     setTabs(newTabs);
   };
 
+  const handleOpenTaskDetailsModal = (task) => {
+    setSelectedTask(task);
+    setIsTaskDetailsModalOpen(true);
+  };
+
+  const handleSaveTaskDetails = (updatedTask) => {
+    const newTabs = [...tabs];
+    const taskIndex = newTabs[activeTab].tasks.findIndex(task => task === selectedTask);
+    if (taskIndex !== -1) {
+      newTabs[activeTab].tasks[taskIndex] = updatedTask;
+      setTabs(newTabs);
+    }
+    setIsTaskDetailsModalOpen(false);
+  };
+
   const backgroundColor = useColorModeValue('white', 'gray.800');
   const color = useColorModeValue('black', 'white');
-
-  const remainingTasksToReward = 3 - tabs[activeTab].tasks.filter(task => task.completed).length;
-
-  // Функция для экспорта всех заметок в JSON
-  const handleExportNotes = () => {
-    const notes = tabs.map(tab => ({
-      name: tab.name,
-      tasks: tab.tasks.map(task => ({
-        text: task.text,
-        completed: task.completed,
-        note: task.note,
-      })),
-    }));
-    exportToJson(notes);
-  };
 
   return (
     <Box>
       <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
 
-      {/* Модальное окно для добавления новой вкладки */}
-      <Modal isOpen={isAddTabModalOpen} onClose={() => setIsAddTabModalOpen(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Добавить новую вкладку</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <Input
-                value={newTabName}
-                onChange={(e) => setNewTabName(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Введите название новой вкладки"
-                autoFocus
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleAddTab}>
-              Добавить
-            </Button>
-            <Button variant="ghost" onClick={() => setIsAddTabModalOpen(false)}>
-              Закрыть
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <TaskDetailsModal
+        isOpen={isTaskDetailsModalOpen}
+        onClose={() => setIsTaskDetailsModalOpen(false)}
+        task={selectedTask}
+        onSave={handleSaveTaskDetails}
+      />
 
       <Flex direction="column" h="100vh">
         <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>
@@ -291,12 +264,6 @@ function App() {
                     <HStack>
                       <Icon as={FaCog} />
                       <Text>Настройки</Text>
-                    </HStack>
-                  </Link>
-                  <Link onClick={handleExportNotes}>
-                    <HStack>
-                      <Icon as={FaFileExport} />
-                      <Text>Экспорт в JSON</Text>
                     </HStack>
                   </Link>
                 </VStack>
@@ -336,7 +303,7 @@ function App() {
                   placement="top"
                 >
                   <Button
-                    onClick={addTab}
+                    onClick={() => addTab(backgroundColor, color)}
                     ml={2}
                     size="sm"
                     variant="outline"
@@ -373,38 +340,25 @@ function App() {
                             onChange={() => handleTaskCompletion(taskIndex)}
                             mb={2}
                             pl="40px"
+                            isDisabled={task.completed}
                           >
                             <Input
                               value={task.text}
                               onChange={(e) => handleTaskChange(taskIndex, e.target.value)}
                               placeholder={`Задача ${taskIndex + 1}`}
                               variant="unstyled"
+                              isDisabled={task.completed}
                             /> 
                           
                           </Checkbox>
-                          <Popover>
-                            <PopoverTrigger>
-                              <IconButton
-                                icon={<BiEdit />} // добавялем примечания к задачам компонент popover
-                                size="sm"
-                                ml={2}
-                                aria-label="Добавить примечание"
-                                borderRadius="full"
-                              />
-                            </PopoverTrigger>
-                            <PopoverContent>
-                              <PopoverArrow />
-                              <PopoverCloseButton />
-                              <PopoverHeader>Примечание</PopoverHeader>
-                              <PopoverBody>
-                                <Textarea
-                                  value={task.note}
-                                  onChange={(e) => handleNoteChange(taskIndex, e.target.value)}
-                                  placeholder="Добавьте примечание"
-                                />
-                              </PopoverBody>
-                            </PopoverContent>
-                          </Popover>
+                          <IconButton
+                            icon={<BiEdit />}
+                            size="sm"
+                            ml={2}
+                            onClick={() => handleOpenTaskDetailsModal(task)}
+                            aria-label="Редактировать задачу"
+                            borderRadius="full"
+                          />
                         </Box>
                       ))}
                     </Stack>
@@ -412,8 +366,8 @@ function App() {
                       <Input
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
-                        onKeyPress={handleKeyPressTask}
-                        placeholder={index < 2 && remainingTasksToReward > 0 ? `Задач осталось: ${remainingTasksToReward}` : "Введи задачу"}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Добавить задачу"
                       />
                       <Button onClick={addTask} ml={2} colorScheme="blue" bg="#3884FD" _hover={{ bg: "#2A69AC" }}>
                         Добавить
