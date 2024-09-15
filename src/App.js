@@ -47,38 +47,23 @@ import {
   Divider,
   useToast,
 } from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins } from 'react-icons/fa';
 
 function App() {
-  // Хук для управления темой (светлая/темная)
   const { colorMode, toggleColorMode } = useColorMode();
-
-  // Состояние для хранения вкладок и задач
   const [tabs, setTabs] = useState([
     { name: 'Работа', tasks: [] },
     { name: 'Личное', tasks: [] },
   ]);
-
-  // Состояние для активной вкладки
   const [activeTab, setActiveTab] = useState(0);
-
-  // Состояние для новой задачи
   const [newTask, setNewTask] = useState('');
-
-  // Состояние для модального окна регистрации
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
-
-  // Состояние для имени пользователя и пароля
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  // Состояние для статуса входа
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Хук для управления открытием/закрытием боковой панели
+  const [coins, setCoins] = useState(0); // Состояние для хранения количества монет
+  const [lastRewardDate, setLastRewardDate] = useState(null); // Состояние для хранения даты последней награды
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // Хук для отображения уведомлений
   const toast = useToast();
 
   // Проверка, было ли уже показано окно регистрации
@@ -89,7 +74,6 @@ function App() {
     }
   }, []);
 
-  // Функция для добавления новой вкладки
   const addTab = (backgroundColor, color) => {
     const newTabName = prompt('Введите название новой вкладки', '', {
       style: {
@@ -102,9 +86,8 @@ function App() {
     }
   };
 
-  // Функция для удаления вкладки
   const deleteTab = (index) => {
-    if (index < 2) return; // Не удаляем основные вкладки
+    if (index < 2) return;
     const newTabs = tabs.filter((_, i) => i !== index);
     setTabs(newTabs);
     if (activeTab === index) {
@@ -112,7 +95,6 @@ function App() {
     }
   };
 
-  // Функция для добавления новой задачи
   const addTask = () => {
     if (newTask.trim() !== '') {
       const newTabs = [...tabs];
@@ -122,64 +104,59 @@ function App() {
     }
   };
 
-  // Функция для изменения текста задачи
   const handleTaskChange = (index, value) => {
     const newTabs = [...tabs];
     newTabs[activeTab].tasks[index].text = value;
     setTabs(newTabs);
   };
 
-  // Функция для отметки задачи как выполненной
   const handleTaskCompletion = (index) => {
     const newTabs = [...tabs];
     newTabs[activeTab].tasks[index].completed = !newTabs[activeTab].tasks[index].completed;
     newTabs[activeTab].tasks.sort((a, b) => a.completed - b.completed);
     setTabs(newTabs);
 
-    // Проверка на выполнение 3 и более задач
     const completedTasks = newTabs[activeTab].tasks.filter(task => task.completed);
-    if (completedTasks.length >= 3) {
+    const today = new Date().toDateString();
+
+    if (completedTasks.length === 3 && (!lastRewardDate || lastRewardDate !== today)) {
       toast({
         title: "Поздравляю!",
-        description: `Ты выполнил все задачи и продолжил серию, которая длится уже ${completedTasks.length} дня!`,
+        description: `Ты выполнил 3 задачи и получил 10 монет!`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
+      setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
+      setLastRewardDate(today); // Обновляем дату последней награды
     }
   };
 
-  // Функция для обработки нажатия клавиши Enter
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       addTask();
     }
   };
 
-  // Функция для обработки регистрации
   const handleRegistration = () => {
     localStorage.setItem('hasRegistered', 'true');
     setIsRegistrationModalOpen(false);
   };
 
-  // Функция для обработки входа
   const handleLogin = () => {
     setIsLoggedIn(true);
     setIsRegistrationModalOpen(false);
   };
 
-  // Функция для обработки выхода
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
 
-  // Динамические цвета для модального окна в зависимости от темы
   const backgroundColor = useColorModeValue('white', 'gray.800');
   const color = useColorModeValue('black', 'white');
 
   return (
     <Box>
-      {/* Модальное окно регистрации */}
       <Modal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
@@ -215,23 +192,23 @@ function App() {
         </ModalContent>
       </Modal>
 
-      {/* Основной контейнер с вертикальным расположением */}
       <Flex direction="column" h="100vh">
-        {/* Верхняя панель навигации */}
         <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>
           <IconButton icon={<FaBars />} onClick={onOpen} aria-label="Open Menu" />
           <Text fontSize="xl" fontWeight="bold">
             Snaily
           </Text>
           <Flex align="center">
+            <HStack spacing={2} mr={4}>
+              <Icon as={FaCoins} />
+              <Text>{coins}</Text>
+            </HStack>
             <Icon as={colorMode === 'light' ? FaSun : FaMoon} mr={2} />
-            <Switch isChecked={colorMode === 'dark'} onChange={toggleColorMode} size='lg'/>
+            <Switch isChecked={colorMode === 'dark'} onChange={toggleColorMode} size='lg' colorScheme="blue" />
           </Flex>
         </Flex>
 
-        {/* Основной контент с боковой панелью и вкладками */}
         <Flex flex={1}>
-          {/* Боковая панель */}
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay />
             <DrawerContent>
@@ -260,15 +237,13 @@ function App() {
             </DrawerContent>
           </Drawer>
 
-          {/* Контейнер для вкладок и задач */}
           <Container maxW="container.md" centerContent flex={1} p={4}>
             <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
-              {/* Список вкладок */}
               <TabList justifyContent="start" borderRadius="md">
                 {tabs.map((tab, index) => (
                   <Tab 
                     key={index} 
-                    _selected={{ color: mode('white', 'gray.800'), bg: 'teal.500' }}
+                    _selected={{ color: 'white', bg: '#3884FD' }}
                     borderRadius="full"
                   >
                     {tab.name}
@@ -290,11 +265,11 @@ function App() {
                   size="sm" 
                   variant="outline"
                   borderRadius="full"
+                  colorScheme="blue"
                 >
                   <FaPlus />
                 </Button>
               </TabList>
-              {/* Содержимое вкладок */}
               <TabPanels>
                 {tabs.map((tab, index) => (
                   <TabPanel key={index}>
@@ -339,7 +314,7 @@ function App() {
                         onKeyPress={handleKeyPress}
                         placeholder="Добавить задачу"
                       />
-                      <Button onClick={addTask} ml={2} colorScheme="teal">
+                      <Button onClick={addTask} ml={2} colorScheme="blue" bg="#3884FD" _hover={{ bg: "#2A69AC" }}>
                         Добавить
                       </Button>
                     </Flex>
