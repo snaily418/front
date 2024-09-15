@@ -86,7 +86,7 @@ const Authorization = (isOpen, setIsOpen, onClose) => {
 
   const handleAuth = () => {
     auth(username, password).then((response) => {
-      localStorage.setItem("token", response.data?.token);
+      localStorage.setItem("token", response.data?.access_token);
 
       getCategories()
         .then((response) => {

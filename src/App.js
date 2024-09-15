@@ -61,6 +61,8 @@ import {
 import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
 import { BiEdit } from 'react-icons/bi';
 
+import Authorization from "./screens/Authorization"
+
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [tabs, setTabs] = useState([
@@ -201,40 +203,7 @@ function App() {
 
   return (
     <Box>
-      <Modal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Регистрация</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Имя пользователя</FormLabel>
-              <Input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Введите имя пользователя"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Пароль</FormLabel>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Введите пароль"
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleRegistration}>
-              Зарегистрироваться
-            </Button>
-            <Button variant="ghost" onClick={() => setIsRegistrationModalOpen(false)}>
-              Закрыть
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
 
       <Flex direction="column" h="100vh">
         <Flex align="center" justify="space-between" p={4} bg={useColorModeValue('gray.100', 'gray.700')}>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 
-export const BASEURL = "http://localhost:5000";
+export const BASEURL = "http://localhost:8000";
 
 export const request = (method, url, data = null, auth = true, long = false) =>
   axios.request({
