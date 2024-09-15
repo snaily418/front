@@ -1,5 +1,4 @@
 import axios from "axios";
-import React from "react";
 
 export const BASEURL = "http://localhost:8000";
 
@@ -17,14 +16,12 @@ export const request = (method, url, data = null, auth = true, long = false) =>
       : {}),
   });
 
-export const getMe = () =>
-  request("get", `/me`, null);
+export const getMe = () => request("get", `/me`, null);
 
-export const getCategories = () =>
-  request("get", `/categories`, null);
+export const getCategories = () => request("get", `/categories`, null);
 
 export const createCategory = (title) =>
-  request("post", `/categories`, {title});
+  request("post", `/categories`, { title });
 
 export const getTasks = (categoryID) =>
   request("get", `/categories/${categoryID}/tasks`);

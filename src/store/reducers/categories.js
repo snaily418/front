@@ -1,8 +1,8 @@
 import {
-  SET_CATEGORIES,
-  ADD_CATEGORY,
-  DELETE_CATEGORY,
-  UPDATE_CATEGORY,
+    ADD_CATEGORY,
+    DELETE_CATEGORY,
+    SET_CATEGORIES,
+    UPDATE_CATEGORY,
 } from "../actions";
 
 const initial = [];

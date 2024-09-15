@@ -1,88 +1,43 @@
-import React, { useState, useEffect } from "react";
 import {
   Box,
-  Flex,
-  Avatar,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Checkbox,
   Button,
-  Input,
-  useColorMode,
-  useColorModeValue,
-  IconButton,
-  Stack,
-  useColorModeValue as mode,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Switch,
-  Icon,
   Container,
+  Divider,
   Drawer,
   DrawerBody,
-  DrawerFooter,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Link,
+  Tab,
+  TabList,
+  TabPanels,
+  Tabs,
+  Text,
+  Tooltip,
+  useColorMode,
   useDisclosure,
   VStack,
-  HStack,
-  Link,
-  Divider,
-  useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  Textarea,
-  Editable,
-  Tooltip,
 } from "@chakra-ui/react";
-import {
-  FaPlus,
-  FaTrash,
-  FaSun,
-  FaMoon,
-  FaBars,
-  FaTasks,
-  FaCog,
-  FaCoins,
-  FaComment,
-  FaFileExport,
-} from "react-icons/fa";
-import { BiEdit } from "react-icons/bi";
+import React, { useEffect, useState } from "react";
+import { FaCog, FaFileExport, FaPlus, FaTasks, FaTrash } from "react-icons/fa";
 
-import Authorization from "./screens/Authorization";
 import AddTabModal from "./screens/AddTabModal";
-import Header from "./screens/Header";
+import Authorization from "./screens/Authorization";
 import Category from "./screens/Category";
+import Header from "./screens/Header";
 
-import { getMe, getCategories } from "./api/api";
+import { getCategories, getMe } from "./api/api";
 import { SET_CATEGORIES, SET_USER } from "./store/actions";
 
 import { useDispatch, useSelector } from "react-redux";
-import { exportToJson } from "./utils/exportUtils"; // Импортируем функцию для экспорта
 import { DELETE_CATEGORY } from "./store/actions";
+import { exportToJson } from "./utils/exportUtils";
 
 function App() {
   const categories = useSelector((state) => state.categories);

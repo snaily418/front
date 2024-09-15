@@ -1,20 +1,19 @@
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 import {
-  Button,
-  Input,
-  useColorModeValue as mode,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
+    Button,
+    FormControl,
+    FormLabel,
+    Input,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
 } from "@chakra-ui/react";
 
 import { getCategories, getMe } from "../api/api";
@@ -33,19 +32,15 @@ const Authorization = ({ isOpen, setIsOpen }) => {
     auth(username, password).then((response) => {
       localStorage.setItem("token", response.data?.access_token);
 
-      getMe()
-        .then((response) => {
-          dispatch({ type: SET_USER, payload: response.data });
-          setIsOpen(false);
-        })
-        .catch((error) => {});
+      getMe().then((response) => {
+        dispatch({ type: SET_USER, payload: response.data });
+        setIsOpen(false);
+      });
 
-      getCategories()
-        .then((response) => {
-          dispatch({ type: SET_CATEGORIES, payload: response.data });
-          setIsOpen(false);
-        })
-        .catch((error) => {});
+      getCategories().then((response) => {
+        dispatch({ type: SET_CATEGORIES, payload: response.data });
+        setIsOpen(false);
+      });
     });
   };
 

@@ -1,74 +1,22 @@
-import React, { useState, useEffect } from "react";
 import {
-  Box,
-  Flex,
-  Avatar,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Checkbox,
-  Button,
-  Input,
-  useColorMode,
-  useColorModeValue,
-  IconButton,
-  Stack,
-  useColorModeValue as mode,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Switch,
-  Icon,
-  Container,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-  VStack,
-  HStack,
-  Link,
-  Divider,
-  useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  Textarea,
-  Editable,
-  Tooltip,
+    Box,
+    Button,
+    Checkbox,
+    Flex,
+    IconButton,
+    Input,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
+    Stack,
+    TabPanel,
+    Textarea
 } from "@chakra-ui/react";
-import {
-  FaPlus,
-  FaTrash,
-  FaSun,
-  FaMoon,
-  FaBars,
-  FaTasks,
-  FaCog,
-  FaCoins,
-  FaComment,
-} from "react-icons/fa";
+import React, { useEffect, useState } from "react";
 import { BiEdit } from "react-icons/bi";
 
 import { useSelector } from "react-redux";
@@ -92,9 +40,7 @@ const Category = ({ id }) => {
     }
   };
 
-  const handleTaskChange = (index, value) => {
-
-  };
+  const handleTaskChange = (index, value) => {};
 
   const handleKeyPressTask = (event) => {
     if (event.key === "Enter") {
@@ -102,9 +48,7 @@ const Category = ({ id }) => {
     }
   };
 
-  const handleNoteChange = (index, value) => {
-    
-  };
+  const handleNoteChange = (index, value) => {};
 
   const remainingTasksToReward =
     3 - tasks.filter((task) => task.completed).length;

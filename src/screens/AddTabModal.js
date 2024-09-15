@@ -2,21 +2,21 @@ import { useState } from "react";
 
 import {
   Button,
+  FormControl,
   Input,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  FormControl,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from "@chakra-ui/react";
 
 import { useDispatch } from "react-redux";
 
-import { ADD_CATEGORY } from "../store/actions";
 import { createCategory } from "../api/api";
+import { ADD_CATEGORY } from "../store/actions";
 
 const AddTabModal = ({ isOpen, setIsOpen }) => {
   const dispatch = useDispatch();

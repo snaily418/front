@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# Snaily
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Описание
 
-## Available Scripts
+Веб-приложение task manager использующее систему мотивации и поощрений для ежедневного выполнения задач
 
-In the project directory, you can run:
+## Установка
 
-### `npm start`
+1. Клонируйте репозиторий:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```sh
+git clone https://github.com/snaily418/front/
+cd front
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. Установите все зависимости:
 
-### `npm test`
+```sh
+npm i
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Используемые библиотеки
 
-### `npm run build`
+1. React
+2. chakra-ui
+3. axios
+4. redux
+5. react-redux
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Запуск приложения
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Перед запуском приложение нужно собрать
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```sh
+npm run build
+```
 
-### `npm run eject`
+После можно локально запустить предпросмотр приложения
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```sh
+serve -s build
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Если `serve` не установлен, его следует установить
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```sh
+npm install -g serve
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Поехали!
 
-## Learn More
+Приложение запущено по адресу
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+http://localhost:3000
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Команда проекта
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Миша - Front Engineer \
+Родион - Front Engineer \
+Коля - Team Lead \
+Даня - Backend Engineer \
+Гоша - Project Manager

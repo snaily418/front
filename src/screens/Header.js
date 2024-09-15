@@ -1,13 +1,13 @@
 import {
-  Flex,
-  Text,
-  useColorModeValue,
-  IconButton,
-  Switch,
-  Icon,
-  HStack,
+    Flex,
+    HStack,
+    Icon,
+    IconButton,
+    Switch,
+    Text,
+    useColorModeValue,
 } from "@chakra-ui/react";
-import { FaSun, FaMoon, FaBars, FaCoins } from "react-icons/fa";
+import { FaBars, FaCoins, FaMoon, FaSun } from "react-icons/fa";
 
 import { useSelector } from "react-redux";
 
