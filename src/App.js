@@ -74,7 +74,8 @@ function App() {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [coins, setCoins] = useState(0); // Состояние для хранения количества монет
-  const [lastRewardDate, setLastRewardDate] = useState(null); // Состояние для хранения даты последней награды
+  const [lastRewardDateWork, setLastRewardDateWork] = useState(null); // Состояние для хранения даты последней награды для папки "Работа"
+  const [lastRewardDatePersonal, setLastRewardDatePersonal] = useState(null); // Состояние для хранения даты последней награды для папки "Личное"
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
@@ -142,16 +143,30 @@ function App() {
     const completedTasks = newTabs[activeTab].tasks.filter(task => task.completed);
     const today = new Date().toDateString();
 
-    if (completedTasks.length === 3 && (!lastRewardDate || lastRewardDate !== today)) {
-      toast({
-        title: "Поздравляю!",
-        description: `Ты выполнил 3 задачи и получил 10 монет!`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
-      setLastRewardDate(today); // Обновляем дату последней награды
+    if (activeTab === 0) { // Работа
+      if (completedTasks.length === 3 && (!lastRewardDateWork || lastRewardDateWork !== today)) {
+        toast({
+          title: "Поздравляю!",
+          description: `Ты выполнил 3 задачи в папке "Работа" и получил 10 монет!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
+        setLastRewardDateWork(today); // Обновляем дату последней награды для папки "Работа"
+      }
+    } else if (activeTab === 1) { // Личное
+      if (completedTasks.length === 3 && (!lastRewardDatePersonal || lastRewardDatePersonal !== today)) {
+        toast({
+          title: "Поздравляю!",
+          description: `Ты выполнил 3 задачи в папке "Личное" и получил 10 монет!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
+        setLastRewardDatePersonal(today); // Обновляем дату последней награды для папки "Личное"
+      }
     }
   };
 
@@ -301,6 +316,7 @@ function App() {
                     borderRadius="full"
                     colorScheme="blue"
                     isDisabled={isAddTabButtonDisabled}
+                    _hover={{ bg: "#2A69AC" }}
                   >
                     <FaPlus />
                   </Button>
