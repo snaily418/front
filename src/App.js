@@ -46,8 +46,18 @@ import {
   Link,
   Divider,
   useToast,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  Textarea,
+  Editable,
 } from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog } from 'react-icons/fa';
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -98,7 +108,7 @@ function App() {
   const addTask = () => {
     if (newTask.trim() !== '') {
       const newTabs = [...tabs];
-      newTabs[activeTab].tasks.unshift({ text: newTask, completed: false });
+      newTabs[activeTab].tasks.unshift({ text: newTask, completed: false, note: '' });
       setTabs(newTabs);
       setNewTask('');
     }
@@ -152,6 +162,7 @@ function App() {
     setIsLoggedIn(false);
   };
 
+  // Динамические цвета для модального окна в зависимости от темы
   const backgroundColor = useColorModeValue('white', 'gray.800');
   const color = useColorModeValue('black', 'white');
 
@@ -302,8 +313,32 @@ function App() {
                               placeholder={`Задача ${taskIndex + 1}`}
                               variant="unstyled"
                               isDisabled={task.completed}
-                            />
+                            /> 
+                          
                           </Checkbox>
+                          <Popover>
+                            <PopoverTrigger>
+                              <IconButton
+                                icon={<BiEdit />} // добавялем примечания к задачам компонент popover
+                                size="sm"
+                                ml={2}
+                                aria-label="Добавить примечание"
+                                borderRadius="full"
+                              />
+                            </PopoverTrigger>
+                            <PopoverContent>
+                              <PopoverArrow />
+                              <PopoverCloseButton />
+                              <PopoverHeader>Примечание</PopoverHeader>
+                              <PopoverBody>
+                                <Textarea
+                                  value={task.note}
+                                  onChange={(e) => handleNoteChange(taskIndex, e.target.value)}
+                                  placeholder="Добавьте примечание"
+                                />
+                              </PopoverBody>
+                            </PopoverContent>
+                          </Popover>
                         </Box>
                       ))}
                     </Stack>
