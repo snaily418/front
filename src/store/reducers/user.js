@@ -1,6 +1,6 @@
 import { SET_USER, UPDATE_USER } from "../actions";
 
-const initial = [];
+const initial = {};
 
 const userReducer = (state = initial, action) => {
   switch (action.type) {

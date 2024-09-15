@@ -23,5 +23,8 @@ export const getMe = () =>
 export const getCategories = () =>
   request("get", `/categories`, null);
 
+export const createCategory = (title) =>
+  request("post", `/categories`, {title});
+
 export const getTasks = (categoryID) =>
   request("get", `/session/${categoryID}/get_type`);

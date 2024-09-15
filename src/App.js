@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -57,24 +57,35 @@ import {
   Textarea,
   Editable,
   Tooltip,
-} from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
-import { BiEdit } from 'react-icons/bi';
+} from "@chakra-ui/react";
+import {
+  FaPlus,
+  FaTrash,
+  FaSun,
+  FaMoon,
+  FaBars,
+  FaTasks,
+  FaCog,
+  FaCoins,
+  FaComment,
+} from "react-icons/fa";
+import { BiEdit } from "react-icons/bi";
 
-import Authorization from "./screens/Authorization"
-import Header from "./screens/Header"
-import { useSelector } from 'react-redux';
+import Authorization from "./screens/Authorization";
+import AddTabModal from "./screens/AddTabModal";
+import Header from "./screens/Header";
+import { useSelector } from "react-redux";
 
 function App() {
-  const categories = useSelector(state => state.categories)
+  const categories = useSelector(state => state.categories);
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [tabs, setTabs] = useState([
-    { name: 'Работа', tasks: [] },
-    { name: 'Личное', tasks: [] },
+    { name: "Работа", tasks: [] },
+    { name: "Личное", tasks: [] },
   ]);
   const [activeTab, setActiveTab] = useState(0);
-  const [newTask, setNewTask] = useState('');
+  const [newTask, setNewTask] = useState("");
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
 
   const [coins, setCoins] = useState(0); // Состояние для хранения количества монет
@@ -84,11 +95,10 @@ function App() {
   const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false); // Состояние для открытия и закрытия модального окна
-  const [newTabName, setNewTabName] = useState(''); // Состояние для хранения имени новой вкладки
 
   // Проверка, было ли уже показано окно регистрации
   useEffect(() => {
-    const hasRegistered = localStorage.getItem('hasRegistered');
+    const hasRegistered = localStorage.getItem("hasRegistered");
     if (!hasRegistered) {
       setIsRegistrationModalOpen(true);
     }
@@ -100,23 +110,6 @@ function App() {
       return;
     }
     setIsAddTabModalOpen(true); // Открываем модальное окно для добавления новой вкладки
-  };
-
-  const handleAddTab = () => {
-    if (newTabName.trim() !== '') {
-      setTabs([...tabs, { name: newTabName, tasks: [] }]);
-      if (tabs.length >= 9) {
-        setIsAddTabButtonDisabled(true);
-      }
-      setNewTabName('');
-      setIsAddTabModalOpen(false); // Закрываем модальное окно после добавления новой вкладки
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && newTabName.trim() !== '') {
-      handleAddTab();
-    }
   };
 
   const deleteTab = (index) => {
@@ -132,11 +125,15 @@ function App() {
   };
 
   const addTask = () => {
-    if (newTask.trim() !== '') {
+    if (newTask.trim() !== "") {
       const newTabs = [...tabs];
-      newTabs[activeTab].tasks.unshift({ text: newTask, completed: false, note: '' });
+      newTabs[activeTab].tasks.unshift({
+        text: newTask,
+        completed: false,
+        note: "",
+      });
       setTabs(newTabs);
-      setNewTask('');
+      setNewTask("");
     }
   };
 
@@ -148,15 +145,22 @@ function App() {
 
   const handleTaskCompletion = (index) => {
     const newTabs = [...tabs];
-    newTabs[activeTab].tasks[index].completed = !newTabs[activeTab].tasks[index].completed;
+    newTabs[activeTab].tasks[index].completed =
+      !newTabs[activeTab].tasks[index].completed;
     newTabs[activeTab].tasks.sort((a, b) => a.completed - b.completed);
     setTabs(newTabs);
 
-    const completedTasks = newTabs[activeTab].tasks.filter(task => task.completed);
+    const completedTasks = newTabs[activeTab].tasks.filter(
+      (task) => task.completed
+    );
     const today = new Date().toDateString();
 
-    if (activeTab === 0) { // Работа
-      if (completedTasks.length === 3 && (!lastRewardDateWork || lastRewardDateWork !== today)) {
+    if (activeTab === 0) {
+      // Работа
+      if (
+        completedTasks.length === 3 &&
+        (!lastRewardDateWork || lastRewardDateWork !== today)
+      ) {
         toast({
           title: "Поздравляю!",
           description: `Ты выполнил 3 задачи в папке "Работа" и получил 10 монет!`,
@@ -167,8 +171,12 @@ function App() {
         setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
         setLastRewardDateWork(today); // Обновляем дату последней награды для папки "Работа"
       }
-    } else if (activeTab === 1) { // Личное
-      if (completedTasks.length === 3 && (!lastRewardDatePersonal || lastRewardDatePersonal !== today)) {
+    } else if (activeTab === 1) {
+      // Личное
+      if (
+        completedTasks.length === 3 &&
+        (!lastRewardDatePersonal || lastRewardDatePersonal !== today)
+      ) {
         toast({
           title: "Поздравляю!",
           description: `Ты выполнил 3 задачи в папке "Личное" и получил 10 монет!`,
@@ -183,11 +191,10 @@ function App() {
   };
 
   const handleKeyPressTask = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       addTask();
     }
   };
-
 
   const handleNoteChange = (index, value) => {
     const newTabs = [...tabs];
@@ -195,45 +202,31 @@ function App() {
     setTabs(newTabs);
   };
 
-  const backgroundColor = useColorModeValue('white', 'gray.800');
-  const color = useColorModeValue('black', 'white');
+  const backgroundColor = useColorModeValue("white", "gray.800");
+  const color = useColorModeValue("black", "white");
 
-  const remainingTasksToReward = 3 - tabs[activeTab].tasks.filter(task => task.completed).length;
+  const remainingTasksToReward =
+    3 - tabs[activeTab].tasks.filter((task) => task.completed).length;
 
   return (
     <Box>
-      <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
+      <Authorization
+        isOpen={isRegistrationModalOpen}
+        setIsOpen={setIsRegistrationModalOpen}
+      />
 
       {/* Модальное окно для добавления новой вкладки */}
-      <Modal isOpen={isAddTabModalOpen} onClose={() => setIsAddTabModalOpen(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Добавить новую вкладку</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <Input
-                value={newTabName}
-                onChange={(e) => setNewTabName(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Введите название новой вкладки"
-                autoFocus
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleAddTab}>
-              Добавить
-            </Button>
-            <Button variant="ghost" onClick={() => setIsAddTabModalOpen(false)}>
-              Закрыть
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <AddTabModal
+        isOpen={isAddTabModalOpen}
+        setIsOpen={setIsAddTabModalOpen}
+      />
 
       <Flex direction="column" h="100vh">
-        <Header onOpen={onOpen} toggleColorMode={toggleColorMode} colorMode={colorMode}/>
+        <Header
+          onOpen={onOpen}
+          toggleColorMode={toggleColorMode}
+          colorMode={colorMode}
+        />
 
         <Flex flex={1}>
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
@@ -243,7 +236,12 @@ function App() {
               <DrawerHeader>Меню</DrawerHeader>
               <DrawerBody>
                 <VStack align="start" spacing={4}>
-                  <Link onClick={() => { setActiveTab(0); onClose(); }}>
+                  <Link
+                    onClick={() => {
+                      setActiveTab(0);
+                      onClose();
+                    }}
+                  >
                     <HStack>
                       <Icon as={FaTasks} />
                       <Text>Задания</Text>
@@ -257,11 +255,12 @@ function App() {
                   </Link>
                 </VStack>
               </DrawerBody>
-                <div align="center">
-                  <Divider />
-                  <Text align="center" mb={5} mt={4}>&copy; 2024 Snaily</Text>
-                
-                </div>
+              <div align="center">
+                <Divider />
+                <Text align="center" mb={5} mt={4}>
+                  &copy; 2024 Snaily
+                </Text>
+              </div>
             </DrawerContent>
           </Drawer>
 
@@ -269,9 +268,9 @@ function App() {
             <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
               <TabList justifyContent="start" borderRadius="md">
                 {categories.map((tab, index) => (
-                  <Tab 
-                    key={index} 
-                    _selected={{ color: 'white', bg: '#3884FD' }}
+                  <Tab
+                    key={index}
+                    _selected={{ color: "white", bg: "#3884FD" }}
                     borderRadius="full"
                   >
                     {tab.title}
@@ -289,7 +288,11 @@ function App() {
                 ))}
 
                 <Tooltip
-                  label={isAddTabButtonDisabled ? "Невозможно добавить вкладку" : "Добавить вкладку задач"}
+                  label={
+                    isAddTabButtonDisabled
+                      ? "Невозможно добавить вкладку"
+                      : "Добавить вкладку задач"
+                  }
                   placement="top"
                 >
                   <Button
@@ -333,11 +336,12 @@ function App() {
                           >
                             <Input
                               value={task.text}
-                              onChange={(e) => handleTaskChange(taskIndex, e.target.value)}
+                              onChange={(e) =>
+                                handleTaskChange(taskIndex, e.target.value)
+                              }
                               placeholder={`Задача ${taskIndex + 1}`}
                               variant="unstyled"
-                            /> 
-                          
+                            />
                           </Checkbox>
                           <Popover>
                             <PopoverTrigger>
@@ -356,7 +360,9 @@ function App() {
                               <PopoverBody>
                                 <Textarea
                                   value={task.note}
-                                  onChange={(e) => handleNoteChange(taskIndex, e.target.value)}
+                                  onChange={(e) =>
+                                    handleNoteChange(taskIndex, e.target.value)
+                                  }
                                   placeholder="Добавьте примечание"
                                 />
                               </PopoverBody>
@@ -370,9 +376,19 @@ function App() {
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
                         onKeyPress={handleKeyPressTask}
-                        placeholder={remainingTasksToReward > 0 ? `Осталось еще ${remainingTasksToReward} задач` : "Введи задачу"}
+                        placeholder={
+                          remainingTasksToReward > 0
+                            ? `Осталось еще ${remainingTasksToReward} задач`
+                            : "Введи задачу"
+                        }
                       />
-                      <Button onClick={addTask} ml={2} colorScheme="blue" bg="#3884FD" _hover={{ bg: "#2A69AC" }}>
+                      <Button
+                        onClick={addTask}
+                        ml={2}
+                        colorScheme="blue"
+                        bg="#3884FD"
+                        _hover={{ bg: "#2A69AC" }}
+                      >
                         Добавить
                       </Button>
                     </Flex>
