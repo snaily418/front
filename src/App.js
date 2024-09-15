@@ -75,9 +75,10 @@ import Authorization from "./screens/Authorization";
 import AddTabModal from "./screens/AddTabModal";
 import Header from "./screens/Header";
 import { useSelector } from "react-redux";
+import Category from "./screens/Category";
 
 function App() {
-  const categories = useSelector(state => state.categories);
+  const categories = useSelector((state) => state.categories);
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [tabs, setTabs] = useState([
@@ -88,9 +89,6 @@ function App() {
   const [newTask, setNewTask] = useState("");
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
 
-  const [coins, setCoins] = useState(0); // Состояние для хранения количества монет
-  const [lastRewardDateWork, setLastRewardDateWork] = useState(null); // Состояние для хранения даты последней награды для папки "Работа"
-  const [lastRewardDatePersonal, setLastRewardDatePersonal] = useState(null); // Состояние для хранения даты последней награды для папки "Личное"
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
@@ -141,53 +139,6 @@ function App() {
     const newTabs = [...tabs];
     newTabs[activeTab].tasks[index].text = value;
     setTabs(newTabs);
-  };
-
-  const handleTaskCompletion = (index) => {
-    const newTabs = [...tabs];
-    newTabs[activeTab].tasks[index].completed =
-      !newTabs[activeTab].tasks[index].completed;
-    newTabs[activeTab].tasks.sort((a, b) => a.completed - b.completed);
-    setTabs(newTabs);
-
-    const completedTasks = newTabs[activeTab].tasks.filter(
-      (task) => task.completed
-    );
-    const today = new Date().toDateString();
-
-    if (activeTab === 0) {
-      // Работа
-      if (
-        completedTasks.length === 3 &&
-        (!lastRewardDateWork || lastRewardDateWork !== today)
-      ) {
-        toast({
-          title: "Поздравляю!",
-          description: `Ты выполнил 3 задачи в папке "Работа" и получил 10 монет!`,
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
-        setLastRewardDateWork(today); // Обновляем дату последней награды для папки "Работа"
-      }
-    } else if (activeTab === 1) {
-      // Личное
-      if (
-        completedTasks.length === 3 &&
-        (!lastRewardDatePersonal || lastRewardDatePersonal !== today)
-      ) {
-        toast({
-          title: "Поздравляю!",
-          description: `Ты выполнил 3 задачи в папке "Личное" и получил 10 монет!`,
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        setCoins(coins + 10); // Начисляем 10 монет за закрытие 3 заданий
-        setLastRewardDatePersonal(today); // Обновляем дату последней награды для папки "Личное"
-      }
-    }
   };
 
   const handleKeyPressTask = (event) => {
@@ -309,90 +260,10 @@ function App() {
                   </Button>
                 </Tooltip>
               </TabList>
+
               <TabPanels>
-                {tabs.map((tab, index) => (
-                  <TabPanel key={index}>
-                    <Stack spacing={2}>
-                      {tab.tasks.map((task, taskIndex) => (
-                        <Box key={taskIndex} position="relative">
-                          <Box
-                            position="absolute"
-                            top="50%"
-                            left="10px"
-                            transform="translateY(-50%)"
-                            fontSize="xl"
-                            fontWeight="bold"
-                            color="gray.400"
-                            zIndex="-1"
-                          >
-                            {taskIndex + 1}
-                          </Box>
-                          <Checkbox
-                            colorScheme="teal"
-                            isChecked={task.completed}
-                            onChange={() => handleTaskCompletion(taskIndex)}
-                            mb={2}
-                            pl="40px"
-                          >
-                            <Input
-                              value={task.text}
-                              onChange={(e) =>
-                                handleTaskChange(taskIndex, e.target.value)
-                              }
-                              placeholder={`Задача ${taskIndex + 1}`}
-                              variant="unstyled"
-                            />
-                          </Checkbox>
-                          <Popover>
-                            <PopoverTrigger>
-                              <IconButton
-                                icon={<BiEdit />} // добавялем примечания к задачам компонент popover
-                                size="sm"
-                                ml={2}
-                                aria-label="Добавить примечание"
-                                borderRadius="full"
-                              />
-                            </PopoverTrigger>
-                            <PopoverContent>
-                              <PopoverArrow />
-                              <PopoverCloseButton />
-                              <PopoverHeader>Примечание</PopoverHeader>
-                              <PopoverBody>
-                                <Textarea
-                                  value={task.note}
-                                  onChange={(e) =>
-                                    handleNoteChange(taskIndex, e.target.value)
-                                  }
-                                  placeholder="Добавьте примечание"
-                                />
-                              </PopoverBody>
-                            </PopoverContent>
-                          </Popover>
-                        </Box>
-                      ))}
-                    </Stack>
-                    <Flex mt={4}>
-                      <Input
-                        value={newTask}
-                        onChange={(e) => setNewTask(e.target.value)}
-                        onKeyPress={handleKeyPressTask}
-                        placeholder={
-                          remainingTasksToReward > 0
-                            ? `Осталось еще ${remainingTasksToReward} задач`
-                            : "Введи задачу"
-                        }
-                      />
-                      <Button
-                        onClick={addTask}
-                        ml={2}
-                        colorScheme="blue"
-                        bg="#3884FD"
-                        _hover={{ bg: "#2A69AC" }}
-                      >
-                        Добавить
-                      </Button>
-                    </Flex>
-                  </TabPanel>
+                {categories.map((category, index) => (
+                  <Category key={index} id={category.id} />
                 ))}
               </TabPanels>
             </Tabs>
