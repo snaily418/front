@@ -25,7 +25,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { FaCog, FaFileExport, FaPlus, FaTasks, FaTrash } from "react-icons/fa";
+import { FaCog, FaPlus, FaTasks, FaTrash } from "react-icons/fa";
 
 import AddTabModal from "./screens/AddTabModal";
 import Authorization from "./screens/Authorization";
@@ -34,15 +34,11 @@ import Header from "./screens/Header";
 
 import { getCategories, getMe } from "./api/api";
 import { SET_CATEGORIES, SET_USER } from "./store/actions";
-} from '@chakra-ui/react';
-import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
-import { BiEdit } from 'react-icons/bi';
 
 import { useDispatch, useSelector } from "react-redux";
+import TaskDetailsModal from "./screens/TaskDetailsModal";
 import { DELETE_CATEGORY } from "./store/actions";
 import { exportToJson } from "./utils/exportUtils";
-import Authorization from "./screens/Authorization"
-import TaskDetailsModal from './screens/TaskDetailsModal';
 
 function App() {
   const categories = useSelector((state) => state.categories);
@@ -112,20 +108,22 @@ function App() {
     exportToJson(notes);
   };
 
-const handleOpenTaskDetailsModal = (task) => {
-    setSelectedTask(task);
-    setIsTaskDetailsModalOpen(true);
-  };
+  // const handleOpenTaskDetailsModal = (task) => {
+  //   setSelectedTask(task);
+  //   setIsTaskDetailsModalOpen(true);
+  // };
 
-  const handleSaveTaskDetails = (updatedTask) => {
-    const newTabs = [...tabs];
-    const taskIndex = newTabs[activeTab].tasks.findIndex(task => task === selectedTask);
-    if (taskIndex !== -1) {
-      newTabs[activeTab].tasks[taskIndex] = updatedTask;
-      setTabs(newTabs);
-    }
-    setIsTaskDetailsModalOpen(false);
-  };
+  // const handleSaveTaskDetails = (updatedTask) => {
+  //   const newTabs = [...tabs];
+  //   const taskIndex = newTabs[activeTab].tasks.findIndex(
+  //     (task) => task === selectedTask
+  //   );
+  //   if (taskIndex !== -1) {
+  //     newTabs[activeTab].tasks[taskIndex] = updatedTask;
+  //     setTabs(newTabs);
+  //   }
+  //   setIsTaskDetailsModalOpen(false);
+  // };
 
   return (
     <Box>
@@ -134,12 +132,12 @@ const handleOpenTaskDetailsModal = (task) => {
         setIsOpen={setIsRegistrationModalOpen}
       />
 
-      <TaskDetailsModal
+      {/* <TaskDetailsModal
         isOpen={isTaskDetailsModalOpen}
         onClose={() => setIsTaskDetailsModalOpen(false)}
         task={selectedTask}
         onSave={handleSaveTaskDetails}
-      />
+      /> */}
       {/* Модальное окно для добавления новой вкладки */}
       <AddTabModal
         isOpen={isAddTabModalOpen}
@@ -221,7 +219,7 @@ const handleOpenTaskDetailsModal = (task) => {
                   placement="top"
                 >
                   <Button
-                    onClick={() => addTab(backgroundColor, color)}
+                    onClick={() => addTab()}
                     ml={2}
                     size="sm"
                     variant="outline"
