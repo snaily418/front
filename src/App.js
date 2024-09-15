@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import {
   Box,
   Flex,
@@ -57,6 +56,7 @@ import {
   PopoverCloseButton,
   Textarea,
   Editable,
+  Tooltip,
 } from '@chakra-ui/react';
 import { FaPlus, FaTrash, FaSun, FaMoon, FaBars, FaTasks, FaCog, FaCoins, FaComment } from 'react-icons/fa';
 import { BiEdit } from 'react-icons/bi';
@@ -77,6 +77,7 @@ function App() {
   const [lastRewardDate, setLastRewardDate] = useState(null); // Состояние для хранения даты последней награды
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
 
   // Проверка, было ли уже показано окно регистрации
   useEffect(() => {
@@ -87,6 +88,10 @@ function App() {
   }, []);
 
   const addTab = (backgroundColor, color) => {
+    if (tabs.length >= 10) {
+      setIsAddTabButtonDisabled(true);
+      return;
+    }
     const newTabName = prompt('Введите название новой вкладки', '', {
       style: {
         backgroundColor: backgroundColor,
@@ -95,6 +100,9 @@ function App() {
     });
     if (newTabName) {
       setTabs([...tabs, { name: newTabName, tasks: [] }]);
+      if (tabs.length >= 9) {
+        setIsAddTabButtonDisabled(true);
+      }
     }
   };
 
@@ -104,6 +112,9 @@ function App() {
     setTabs(newTabs);
     if (activeTab === index) {
       setActiveTab(0);
+    }
+    if (newTabs.length < 10) {
+      setIsAddTabButtonDisabled(false);
     }
   };
 
@@ -278,16 +289,22 @@ function App() {
                     )}
                   </Tab>
                 ))}
-                <Button 
-                  onClick={() => addTab(backgroundColor, color)} 
-                  ml={2} 
-                  size="sm" 
-                  variant="outline"
-                  borderRadius="full"
-                  colorScheme="blue"
+                <Tooltip
+                  label={isAddTabButtonDisabled ? "Невозможно добавить вкладку" : "Добавить вкладку задач"}
+                  placement="top"
                 >
-                  <FaPlus />
-                </Button>
+                  <Button
+                    onClick={() => addTab(backgroundColor, color)}
+                    ml={2}
+                    size="sm"
+                    variant="outline"
+                    borderRadius="full"
+                    colorScheme="blue"
+                    isDisabled={isAddTabButtonDisabled}
+                  >
+                    <FaPlus />
+                  </Button>
+                </Tooltip>
               </TabList>
               <TabPanels>
                 {tabs.map((tab, index) => (
