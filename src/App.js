@@ -63,6 +63,10 @@ import { BiEdit } from 'react-icons/bi';
 
 import Authorization from "./screens/Authorization"
 
+// Импортируем шрифт Roboto
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/700.css';
+
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [tabs, setTabs] = useState([
@@ -210,7 +214,7 @@ function App() {
   const color = useColorModeValue('black', 'white');
 
   return (
-    <Box fontFamily="Montserrat">
+    <Box fontFamily="Roboto, sans-serif">
       <Authorization isOpen={isRegistrationModalOpen} setIsOpen={setIsRegistrationModalOpen} />
 
       <Modal isOpen={isAddTabModalOpen} onClose={() => setIsAddTabModalOpen(false)}>
