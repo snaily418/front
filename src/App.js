@@ -176,6 +176,12 @@ function App() {
                       <Text>Настройки</Text>
                     </HStack>
                   </Link>
+                  <Link onClick={handleExportNotes}>
+                    <HStack>
+                      <Icon as={FaFileExport} />
+                      <Text>Экспорт в JSON</Text>
+                    </HStack>
+                  </Link>
                 </VStack>
               </DrawerBody>
               <div align="center">
