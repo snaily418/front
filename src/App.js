@@ -71,7 +71,7 @@ import {
   FaFileExport,
 } from "react-icons/fa";
 import { BiEdit } from "react-icons/bi";
-
+import useTaskNotification from "./hooks/useTaskNotification";
 import Authorization from "./screens/Authorization";
 import AddTabModal from "./screens/AddTabModal";
 import Header from "./screens/Header";
@@ -89,15 +89,16 @@ function App() {
   const dispatch = useDispatch();
 
   const { colorMode, toggleColorMode } = useColorMode();
-
   const [activeTab, setActiveTab] = useState(0);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
+  const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
-  const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false); // Состояние для открытия и закрытия модального окна
+  const toast = useToast();
 
-  // Проверка, было ли уже показано окно регистрации
+  useTaskNotification(); // Используем хук для уведомлений
+
   useEffect(() => {
     const hasRegistered = localStorage.getItem("token");
     if (!hasRegistered) {
@@ -115,14 +116,14 @@ function App() {
         })
         .catch((error) => {});
     }
-  }, []);
+  }, [dispatch]);
 
   const addTab = () => {
     if (categories.length >= 10) {
       setIsAddTabButtonDisabled(true);
       return;
     }
-    setIsAddTabModalOpen(true); // Открываем модальное окно для добавления новой вкладки
+    setIsAddTabModalOpen(true);
   };
 
   const deleteTab = (index) => {
@@ -137,11 +138,10 @@ function App() {
     }
   };
 
-  // Функция для экспорта всех заметок в JSON
   const handleExportNotes = () => {
     const notes = categories.map((tab) => ({
       name: tab.name,
-      tasks: [].map((task) => ({
+      tasks: tab.tasks.map((task) => ({
         text: task.text,
         completed: task.completed,
         note: task.note,
@@ -157,7 +157,6 @@ function App() {
         setIsOpen={setIsRegistrationModalOpen}
       />
 
-      {/* Модальное окно для добавления новой вкладки */}
       <AddTabModal
         isOpen={isAddTabModalOpen}
         setIsOpen={setIsAddTabModalOpen}
@@ -214,49 +213,14 @@ function App() {
 
           <Container maxW="container.md" centerContent flex={1} p={4}>
             <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
-              <TabList justifyContent="start" borderRadius="md">
-                {categories.map((tab, index) => (
-                  <Tab
-                    key={index}
-                    _selected={{ color: "white", bg: "#3884FD" }}
-                    borderRadius="full"
-                  >
-                    {tab.title}
-                    {!tab.permanent && (
-                      <IconButton
-                        icon={<FaTrash />}
-                        size="xs"
-                        ml={2}
-                        onClick={() => deleteTab(tab.id)}
-                        aria-label="Удалить вкладку"
-                        borderRadius="full"
-                      />
-                    )}
-                  </Tab>
-                ))}
-
-                <Tooltip
-                  label={
-                    isAddTabButtonDisabled
-                      ? "Невозможно добавить вкладку"
-                      : "Добавить вкладку задач"
-                  }
-                  placement="top"
-                >
-                  <Button
-                    onClick={addTab}
-                    ml={2}
-                    size="sm"
-                    variant="outline"
-                    borderRadius="full"
-                    colorScheme="blue"
-                    isDisabled={isAddTabButtonDisabled}
-                    _hover={{ bg: "#2A69AC" }}
-                  >
-                    <FaPlus />
-                  </Button>
-                </Tooltip>
-              </TabList>
+              <TabList
+                categories={categories}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                deleteTab={deleteTab}
+                addTab={addTab}
+                isAddTabButtonDisabled={isAddTabButtonDisabled}
+              />
 
               <TabPanels>
                 {categories.map((category, index) => (
