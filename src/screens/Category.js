@@ -37,6 +37,7 @@ const Category = ({ id }) => {
   const addTask = () => {
     if (newTask.trim() !== "") {
       setNewTask("");
+      setTasks([...tasks, ])
     }
   };
 
