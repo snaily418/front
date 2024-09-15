@@ -78,7 +78,7 @@ import { auth } from "../api/auth";
 
 import { SET_CATEGORIES } from "../store/actions";
 
-const Authorization = (isOpen, setIsOpen, onClose) => {
+const Authorization = ({isOpen, setIsOpen}) => {
   const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
