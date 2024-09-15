@@ -60,3 +60,7 @@ http://localhost:3000
 Коля - Team Lead \
 Даня - Backend Engineer \
 Гоша - Project Manager
+
+# Несвязанный с беком магазин
+
+![](shop.jpg)
