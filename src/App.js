@@ -67,7 +67,7 @@ import {
   FaTasks,
   FaCog,
   FaCoins,
-  FaComment,
+  FaComment, FaFileExport,
 } from "react-icons/fa";
 import { BiEdit } from "react-icons/bi";
 
@@ -76,6 +76,7 @@ import AddTabModal from "./screens/AddTabModal";
 import Header from "./screens/Header";
 import { useSelector } from "react-redux";
 import Category from "./screens/Category";
+import { exportToJson } from './utils/exportUtils'; // Импортируем функцию для экспорта
 
 function App() {
   const categories = useSelector((state) => state.categories);
@@ -156,6 +157,20 @@ function App() {
   const backgroundColor = useColorModeValue("white", "gray.800");
   const color = useColorModeValue("black", "white");
 
+  const remainingTasksToReward = 3 - tabs[activeTab].tasks.filter(task => task.completed).length;
+
+  // Функция для экспорта всех заметок в JSON
+  const handleExportNotes = () => {
+    const notes = tabs.map(tab => ({
+      name: tab.name,
+      tasks: tab.tasks.map(task => ({
+        text: task.text,
+        completed: task.completed,
+        note: task.note,
+      })),
+    }));
+    exportToJson(notes);
+  };
 
   return (
     <Box>
@@ -200,6 +215,12 @@ function App() {
                     <HStack>
                       <Icon as={FaCog} />
                       <Text>Настройки</Text>
+                    </HStack>
+                  </Link>
+                  <Link onClick={handleExportNotes}>
+                    <HStack>
+                      <Icon as={FaFileExport} />
+                      <Text>Экспорт в JSON</Text>
                     </HStack>
                   </Link>
                 </VStack>
