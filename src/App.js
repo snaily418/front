@@ -156,8 +156,6 @@ function App() {
   const backgroundColor = useColorModeValue("white", "gray.800");
   const color = useColorModeValue("black", "white");
 
-  const remainingTasksToReward =
-    3 - tabs[activeTab].tasks.filter((task) => task.completed).length;
 
   return (
     <Box>
