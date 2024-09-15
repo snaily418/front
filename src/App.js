@@ -67,44 +67,58 @@ import {
   FaTasks,
   FaCog,
   FaCoins,
-  FaComment, FaFileExport,
+  FaComment,
+  FaFileExport,
 } from "react-icons/fa";
 import { BiEdit } from "react-icons/bi";
 
 import Authorization from "./screens/Authorization";
 import AddTabModal from "./screens/AddTabModal";
 import Header from "./screens/Header";
-import { useSelector } from "react-redux";
 import Category from "./screens/Category";
-import { exportToJson } from './utils/exportUtils'; // Импортируем функцию для экспорта
+
+import { getMe, getCategories } from "./api/api";
+import { SET_CATEGORIES, SET_USER } from "./store/actions";
+
+import { useDispatch, useSelector } from "react-redux";
+import { exportToJson } from "./utils/exportUtils"; // Импортируем функцию для экспорта
+import { DELETE_CATEGORY } from "./store/actions";
 
 function App() {
   const categories = useSelector((state) => state.categories);
+  const dispatch = useDispatch();
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const [tabs, setTabs] = useState([
-    { name: "Работа", tasks: [] },
-    { name: "Личное", tasks: [] },
-  ]);
+
   const [activeTab, setActiveTab] = useState(0);
-  const [newTask, setNewTask] = useState("");
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
   const [isAddTabButtonDisabled, setIsAddTabButtonDisabled] = useState(false);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false); // Состояние для открытия и закрытия модального окна
 
   // Проверка, было ли уже показано окно регистрации
   useEffect(() => {
-    const hasRegistered = localStorage.getItem("hasRegistered");
+    const hasRegistered = localStorage.getItem("token");
     if (!hasRegistered) {
       setIsRegistrationModalOpen(true);
+    } else {
+      getMe()
+        .then((response) => {
+          dispatch({ type: SET_USER, payload: response.data });
+        })
+        .catch((error) => {});
+
+      getCategories()
+        .then((response) => {
+          dispatch({ type: SET_CATEGORIES, payload: response.data });
+        })
+        .catch((error) => {});
     }
   }, []);
 
   const addTab = () => {
-    if (tabs.length >= 10) {
+    if (categories.length >= 10) {
       setIsAddTabButtonDisabled(true);
       return;
     }
@@ -113,57 +127,21 @@ function App() {
 
   const deleteTab = (index) => {
     if (index < 2) return;
-    const newTabs = tabs.filter((_, i) => i !== index);
-    setTabs(newTabs);
+    dispatch({ type: DELETE_CATEGORY, payload: categories[index].id });
+
     if (activeTab === index) {
       setActiveTab(0);
     }
-    if (newTabs.length < 10) {
+    if (categories.length < 10) {
       setIsAddTabButtonDisabled(false);
     }
   };
 
-  const addTask = () => {
-    if (newTask.trim() !== "") {
-      const newTabs = [...tabs];
-      newTabs[activeTab].tasks.unshift({
-        text: newTask,
-        completed: false,
-        note: "",
-      });
-      setTabs(newTabs);
-      setNewTask("");
-    }
-  };
-
-  const handleTaskChange = (index, value) => {
-    const newTabs = [...tabs];
-    newTabs[activeTab].tasks[index].text = value;
-    setTabs(newTabs);
-  };
-
-  const handleKeyPressTask = (event) => {
-    if (event.key === "Enter") {
-      addTask();
-    }
-  };
-
-  const handleNoteChange = (index, value) => {
-    const newTabs = [...tabs];
-    newTabs[activeTab].tasks[index].note = value;
-    setTabs(newTabs);
-  };
-
-  const backgroundColor = useColorModeValue("white", "gray.800");
-  const color = useColorModeValue("black", "white");
-
-  const remainingTasksToReward = 3 - tabs[activeTab].tasks.filter(task => task.completed).length;
-
   // Функция для экспорта всех заметок в JSON
   const handleExportNotes = () => {
-    const notes = tabs.map(tab => ({
+    const notes = categories.map((tab) => ({
       name: tab.name,
-      tasks: tab.tasks.map(task => ({
+      tasks: [].map((task) => ({
         text: task.text,
         completed: task.completed,
         note: task.note,
